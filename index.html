@@ -65,14 +65,15 @@ let questions = [
 let answers = [];
 let q = 0;
 
+// GitHub Info
 const token = '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';
-const repoOwner = 'sappikabdy07-tech'; // replace with your username
-const repoName = 'sappi-ka-bdy-ans-main';   // replace with your repo name
+const repoOwner = 'sappikabdy07-tech';
+const repoName = 'sappi-ka-bdy-ans-main';
 const filePath = 'answers.json';
 
 async function saveToGitHub(answerObj){
     try {
-        const getResponse = await fetch(https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath});
+        const getResponse = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`);
         const fileData = await getResponse.json();
         const oldContent = atob(fileData.content);
         let allAnswers = [];
@@ -81,14 +82,14 @@ async function saveToGitHub(answerObj){
         allAnswers.push(answerObj);
         const updatedContent = btoa(JSON.stringify(allAnswers, null, 2));
 
-        await fetch(https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}, {
+        await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`, {
             method: 'PUT',
             headers: {
-                'Authorization': token ${token},
+                'Authorization': `token ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                message: Add new answer by Sapna,
+                message: `Add new answer by Sapna`,
                 content: updatedContent,
                 sha: fileData.sha
             })
@@ -113,7 +114,8 @@ function nextQuestion() {
         answer: ans,
         timestamp: new Date().toISOString()
     };
-    saveToGitHub(answerObj);
+
+    saveToGitHub(answerObj); // GitHub save
 
     document.getElementById("answer").value = "";
     q++;
