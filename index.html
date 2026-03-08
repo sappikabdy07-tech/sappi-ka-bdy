@@ -74,7 +74,7 @@ let questions = [
 ];
 
 let answers = [];
-let q = -1; // starting with welcome screen
+let q = -1; // start with welcome
 
 function nextQuestion() {
     let answerInput = document.getElementById("answer");
@@ -90,7 +90,7 @@ function nextQuestion() {
             return;
         }
     } else {
-        q++; // move from welcome screen to first question
+        q++; // move from welcome to first question
     }
 
     if(q < questions.length) {
@@ -110,12 +110,12 @@ function nextQuestion() {
 }
 
 function sendToGoogleSheet(data){
-    fetch("https://script.google.com/macros/s/AKfycbz0fI38S9KEAGFRGHW4TpSv4QVHFEIlA_k2uTbrZ_UvEsKe388px_rj-KdD2Wr2owpj/exec", {
+    fetch("https://script.google.com/macros/s/AKfycbyHp98rtKkG988R4r6R8eS07NhaxHxsyrpj5asfAkekdq8QMawAOX9elood8pp-4EsH/exec", {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {"Content-Type": "application/json"}
     })
-    .then(response => console.log("Answers saved to Google Sheet!"))
+    .then(response => console.log("Answers saved! ✅"))
     .catch(error => console.error("Error sending to Google Sheet:", error));
 }
 
