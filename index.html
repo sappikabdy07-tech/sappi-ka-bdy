@@ -1,68 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Birthday Quiz for Sapna 🎂✨</title>
+<title>Birthday Quiz for Sapna</title>
 <style>
 body {
     font-family: Arial, sans-serif;
     text-align: center;
+    padding: 30px;
+    /* Background photo */
     background: url('https://lh3.googleusercontent.com/pw/AP1GczOIEP67lMpx5UEDzv9T7YF24x-_K8ZAzKlPBIUqgpXYP49OeRQ66Pw9v-eB_bvm3WyZMrOxz5NpfcreM8KxO2taldgbQSWHny99Q-wgeonZSuxwKOoM3AHbLlYIUyE8n3NC5sLXpXO3PKAFpCbUHNw=w608-h913-s-no-gm?authuser=0') no-repeat center center fixed;
     background-size: cover;
-    padding: 40px 20px;
-    color: #333;
 }
 
 #box {
-    background: rgba(255,255,255,0.95);
-    padding: 40px 30px;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 30px;
     border-radius: 15px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
     max-width: 600px;
     margin: auto;
 }
-
-h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-}
-
 button {
-    padding: 15px 30px;
-    font-size: 18px;
+    padding: 10px 20px;
+    font-size: 16px;
     background: #ff4d88;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 5px;
     cursor: pointer;
-    margin-top: 20px;
-    transition: 0.3s;
+    margin: 10px;
 }
-
-button:hover {
-    background: #e03e75;
-}
-
 input {
-    padding: 15px;
-    width: 90%;
-    max-width: 500px;
-    margin-top: 15px;
-    font-size: 18px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
+    padding: 10px;
+    width: 80%;
+    margin-top: 10px;
+    font-size: 16px;
 }
-
-#welcomeGif {
-    width: 180px;
-    margin-bottom: 15px;
+h2 {
+    color: #ff4d88;
 }
 </style>
+</head>
+<body>
+<div id="box">
+<h2 id="question">🎉 Happy Birthday, Sapna! 🎂<br>1. Are you fine? 🙂</h2>
+<input type="text" id="answer" placeholder="Type your answer">
+<br>
+<button onclick="nextQuestion()">Next</button>
+</div>
+
 <script>
 let questions = [
-"1. Before we start… how are you feeling right now? 🙂",
+"1. Are you fine? 🙂",
 "2. What was your first reaction when you saw the gift? 🎁",
 "3. If this surprise had a secret planner, who would you suspect first? 👀",
 "4. If you rate this gift (1-10) what would you give? ⭐",
@@ -74,66 +63,96 @@ let questions = [
 ];
 
 let answers = [];
-let q = -1; // start with welcome
+let q = 0;
+
+const token = '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';
+const repoOwner = 'YOUR_GITHUB_USERNAME'; // replace with your username
+const repoName = 'sapna-birthday-quiz';   // replace with your repo name
+const filePath = 'answers.json';
+
+async function saveToGitHub(answerObj){
+    try {
+        const getResponse = await fetch(https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath});
+        const fileData = await getResponse.json();
+        const oldContent = atob(fileData.content);
+        let allAnswers = [];
+        try { allAnswers = JSON.parse(oldContent); } catch(e){}
+
+        allAnswers.push(answerObj);
+        const updatedContent = btoa(JSON.stringify(allAnswers, null, 2));
+
+        await fetch(https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}, {
+            method: 'PUT',
+            headers: {
+                'Authorization': token ${token},
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                message: Add new answer by Sapna,
+                content: updatedContent,
+                sha: fileData.sha
+            })
+        });
+    } catch(err){
+        console.error('GitHub save error:', err);
+    }
+}
 
 function nextQuestion() {
-    let answerInput = document.getElementById("answer");
-
-    if(q >= 0) {
-        let ans = answerInput.value.trim();
-        if(ans != "") {
-            answers.push(ans);
-            answerInput.value = "";
-            q++;
-        } else {
-            alert("Please enter an answer!");
-            return;
-        }
-    } else {
-        q++; // move from welcome to first question
+    let ans = document.getElementById("answer").value.trim();
+    if(ans === ""){
+        alert("Please enter an answer!");
+        return;
     }
 
-    if(q < questions.length) {
-        document.getElementById("question").innerHTML = questions[q];
-        document.getElementById("answer").style.display = "block";
-        document.getElementById("nextBtn").innerText = "Next";
-        document.getElementById("welcomeGif").style.display = "none";
+    answers.push(ans);
+
+    const answerObj = {
+        user: "Sapna",
+        question: questions[q],
+        answer: ans,
+        timestamp: new Date().toISOString()
+    };
+    saveToGitHub(answerObj);
+
+    document.getElementById("answer").value = "";
+    q++;
+
+    if(q < questions.length){
+        document.getElementById("question").innerText = questions[q];
     } else {
-        sendToGoogleSheet(answers);
-        document.getElementById("box").innerHTML =
-        `<h2>🎉 You finished the quiz! 🎉</h2>
-        <img src='https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif' width='250'><br><br>
-        <p>🎂 <b>Happy Birthday, Sapna!</b> ✨</p>
-        <p>Your name means “dream,” and just like your name, you make life colorful and full of hope. May every little dream in your heart come true. Just like these glowing lights around, may your life shine with happiness, love, and warmth. Keep smiling, keep believing in yourself, and never stop chasing your dreams. Today is all about you… enjoy every moment, Sapna! 🌸💖</p>
-        <p>Thanks for completing the quiz! 💖</p>`;
+        document.getElementById("box").innerHTML = `
+        <h2>🎉 Woohoo! You completed the quiz! 😄💖<br>
+        You are amazing! 🌸<br>
+        Now… a little secret awaits! 🤫</h2>
+        <button onclick="secretQuestion()">Continue</button>
+        `;
     }
 }
 
-function sendToGoogleSheet(data){
-    fetch("https://script.google.com/macros/s/AKfycbyHp98rtKkG988R4r6R8eS07NhaxHxsyrpj5asfAkekdq8QMawAOX9elood8pp-4EsH/exec", {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {"Content-Type": "application/json"}
-    })
-    .then(response => console.log("Answers saved! ✅"))
-    .catch(error => console.error("Error sending to Google Sheet:", error));
+function secretQuestion(){
+    document.getElementById("box").innerHTML = `
+    <h2>Do you want to know who I am? 🤫</h2>
+    <button onclick="revealSecret('yes')">Yes</button>
+    <button onclick="revealSecret('no')">No</button>
+    `;
 }
 
-window.onload = function() {
-    document.getElementById("question").innerHTML = 
-        "🎉 <b>Happy Birthday, Sapna!</b> 🎂✨ <br>Welcome to your special quiz! 🌸<br>Click Next to start!";
-    document.getElementById("answer").style.display = "none";
-    document.getElementById("welcomeGif").style.display = "block";
-};
+function revealSecret(answer){
+    if(answer === 'yes'){
+        document.getElementById("box").innerHTML = `
+        <h2>🎉 Surprise! 🎉</h2>
+        <p>Kya kroge jaan kar? 😏</p>
+        <img src='https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif' width='200'><br>
+        <p>Enjoy your special day! 💖</p>
+        `;
+    } else {
+        document.getElementById("box").innerHTML = `
+        <h2>Alright! Enjoy your day 😄✨</h2>
+        <img src='https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif' width='200'>
+        `;
+    }
+}
 </script>
-</head>
-<body>
-<div id="box">
-<h2 id="question"></h2>
-<img id="welcomeGif" src="https://media.giphy.com/media/26BRrSvJUa0crqw4E/giphy.gif" alt="Birthday GIF"><br>
-<input type="text" id="answer" placeholder="Type your answer">
-<br>
-<button id="nextBtn" onclick="nextQuestion()">Next</button>
-</div>
 </body>
 </html>
