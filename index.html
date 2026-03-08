@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Small Surprise Quiz for Sapna</title>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Quiz for Sapna 🎂✨</title>
 <style>
 body {
     font-family: Arial, sans-serif;
     text-align: center;
-    background: #fff3f7;
+    background: url('https://lh3.googleusercontent.com/pw/AP1GczOIEP67lMpx5UEDzv9T7YF24x-_K8ZAzKlPBIUqgpXYP49OeRQ66Pw9v-eB_bvm3WyZMrOxz5NpfcreM8KxO2taldgbQSWHny99Q-wgeonZSuxwKOoM3AHbLlYIUyE8n3NC5sLXpXO3PKAFpCbUHNw=w608-h913-s-no-gm?authuser=0') no-repeat center center fixed;
+    background-size: cover;
     padding: 40px 20px;
+    color: #333;
 }
 
 #box {
-    background: white;
+    background: rgba(255,255,255,0.95);
     padding: 40px 30px;
     border-radius: 15px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.25);
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
     max-width: 600px;
     margin: auto;
 }
@@ -90,8 +93,7 @@ function nextQuestion() {
         <p>Thanks for completing the quiz! 💖</p>`;
 
         console.log("Answers:", answers);
-        // Yahan Google Sheet save function call kar sakte ho
-        // sendToGoogleSheet(answers);
+        // Optional: sendToGoogleSheet(answers); // Add your Google Sheet function here
     }
 }
 </script>
