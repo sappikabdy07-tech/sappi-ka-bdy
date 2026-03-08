@@ -1,139 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Birthday Surprise Quiz for Sapna</title>
+<title>Small Surprise Quiz for Sapna</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: Arial, sans-serif;
     text-align: center;
-    background: linear-gradient(to bottom, #ffe6f0, #fff0f5);
+    background: #fff3f7;
     padding: 40px 20px;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
 }
 
-/* Sparkles animation */
-@keyframes sparkle {
-  0% {opacity:0; transform: scale(0);}
-  50% {opacity:1; transform: scale(1);}
-  100% {opacity:0; transform: scale(0);}
-}
-.sparkle {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  background: gold;
-  border-radius: 50%;
-  animation: sparkle 2s infinite;
-}
-
-/* Box styling */
 #box {
-    position: relative;
-    background: #ffffff;
+    background: white;
     padding: 40px 30px;
-    border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(255,77,136,0.3);
-    max-width: 500px;
-    width: 100%;
-    text-align: center;
-    z-index: 1;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.25);
+    max-width: 600px;
+    margin: auto;
 }
 
-/* Question text */
-#question {
-    font-size: 20px;
-    margin-bottom: 20px;
-    color: #ff3399;
-    font-weight: bold;
-}
-
-/* Input box */
-input {
-    padding: 12px;
-    width: 90%;
-    font-size: 16px;
-    border: 2px solid #ff99cc;
-    border-radius: 10px;
-    outline: none;
+h2 {
+    font-size: 24px;
     margin-bottom: 20px;
 }
 
-/* Button styling */
 button {
-    padding: 12px 25px;
-    font-size: 16px;
-    background: #ff66aa;
+    padding: 15px 30px;
+    font-size: 18px;
+    background: #ff4d88;
     color: white;
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
+    margin-top: 20px;
     transition: 0.3s;
 }
+
 button:hover {
-    background: #ff1a66;
-    box-shadow: 0 0 15px #ff66aa;
+    background: #e03e75;
 }
 
-/* Final wish styling */
-#box h2 {
-    color: #ff4d88;
-}
-
-#box p {
-    font-size: 16px;
-    color: #333333;
-    line-height: 1.5;
+input {
+    padding: 15px;
+    width: 90%;
+    max-width: 500px;
+    margin-top: 15px;
+    font-size: 18px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
 }
 </style>
 <script>
-// Selected 9 questions
 let questions = [
 "1. Before we start… how are you feeling right now? 🙂",
 "2. What was your first reaction when you saw the gift? 🎁",
-"3. If you knew who sent this gift, what would you say? 🎁",
-"4. If this surprise had a secret planner, who would you suspect first? 👀",
-"5. If you rate this gift (1-10) what would you give? ⭐",
-"6. Which emoji describes your mood now? 😄",
-"7. If you describe this gift in one word, what would it be? ✨",
-"8. Did this surprise feel unexpected? 🎉",
-"9. Which part of this gift did you like the most? 😍"
+"3. If this surprise had a secret planner, who would you suspect first? 👀",
+"4. If you rate this gift (1-10) what would you give? ⭐",
+"5. Which emoji describes your mood now? 😄",
+"6. If you describe this gift in one word, what would it be? ✨",
+"7. Did this surprise feel unexpected? 🎉",
+"8. Are you enjoying this quiz? 😄",
+"9. Last question… will you send me a smile? 😊"
 ];
 
 let answers = [];
 let q = 0;
-let quizStarted = false;
 
-// Create sparkle background
-function createSparkles(num){
-    for(let i=0;i<num;i++){
-        let s = document.createElement("div");
-        s.className = "sparkle";
-        s.style.top = Math.random()*100 + "%";
-        s.style.left = Math.random()*100 + "%";
-        s.style.animationDelay = (Math.random()*2)+"s";
-        document.body.appendChild(s);
-    }
-}
-window.onload = function(){
-    createSparkles(30);
-}
-
-// Start quiz
-function startQuiz(){
-    quizStarted = true;
-    document.getElementById("box").innerHTML = `
-        <h2 id="question">${questions[0]}</h2>
-        <input type="text" id="answer" placeholder="Type your answer">
-        <br>
-        <button onclick="nextQuestion()">Next</button>
-    `;
-}
-
-// Next question
 function nextQuestion() {
     let ans = document.getElementById("answer").value.trim();
     if(ans != "") {
@@ -148,40 +82,26 @@ function nextQuestion() {
     if(q < questions.length){
         document.getElementById("question").innerText = questions[q];
     } else {
-        sendToGoogleSheet(answers); // Send answers
-        showFinalWish();
+        document.getElementById("box").innerHTML =
+        `<h2>🎉 You finished the quiz! 🎉</h2>
+        <img src='https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif' width='250'><br><br>
+        <p>🎂 <b>Happy Birthday, Sapna!</b> ✨</p>
+        <p>Your name means “dream,” and just like your name, you make life colorful and full of hope. May every little dream in your heart come true. Just like these glowing lights around, may your life shine with happiness, love, and warmth. Keep smiling, keep believing in yourself, and never stop chasing your dreams. Today is all about you… enjoy every moment, Sapna! 🌸💖</p>
+        <p>Thanks for completing the quiz! 💖</p>`;
+
+        console.log("Answers:", answers);
+        // Yahan Google Sheet save function call kar sakte ho
+        // sendToGoogleSheet(answers);
     }
-}
-
-// Show final birthday wish
-function showFinalWish(){
-    document.getElementById("box").innerHTML =
-    `<h2>🎉 Happy Birthday, Sapna! 🎂✨</h2>
-    <img src='https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif' width='200' style='border-radius:15px; margin:15px 0;'><br>
-    <p>Your name means “dream,” and that alone makes it beautiful. Dreams give life hope, color, and direction. May every dream you hold in your heart come true. Just like these little lights shining softly around, may your life always glow with happiness, warmth, and peaceful moments. Keep smiling, keep shining, and never stop believing in your dreams… just like your name, Sapna. 🌸</p>
-    <p>Thanks for completing the quiz! 💖</p>`;
-}
-
-// Send answers to Google Sheet
-function sendToGoogleSheet(answers){
-    fetch("YOUR_WEB_APP_URL", { // replace with your Apps Script Web App URL
-        method: "POST",
-        body: JSON.stringify({answers: answers}),
-        headers: {"Content-Type": "application/json"}
-    })
-    .then(response => response.text())
-    .then(data => console.log(data))
-    .catch(error => console.error(error));
 }
 </script>
 </head>
 <body>
 <div id="box">
-    <h2>🎉 Happy Birthday, Sapna! 🎂✨</h2>
-    <p>Wishing you a day full of love, joy, and surprises! 🌸</p>
-    <img src="https://media.giphy.com/media/l0MYC0LajbaPoEADu/giphy.gif" width="200" style="border-radius:15px; margin:15px 0;">
-    <br>
-    <button onclick="startQuiz()">Start Quiz 🎁</button>
+<h2 id="question">1. Before we start… how are you feeling right now? 🙂</h2>
+<input type="text" id="answer" placeholder="Type your answer">
+<br>
+<button onclick="nextQuestion()">Next</button>
 </div>
 </body>
 </html>
