@@ -54,6 +54,11 @@ input {
     border: 1px solid #ccc;
     box-sizing: border-box;
 }
+
+#welcomeGif {
+    width: 180px;
+    margin-bottom: 15px;
+}
 </style>
 <script>
 let questions = [
@@ -69,41 +74,66 @@ let questions = [
 ];
 
 let answers = [];
-let q = 0;
+let q = -1; // starting with welcome screen
 
 function nextQuestion() {
-    let ans = document.getElementById("answer").value.trim();
-    if(ans != "") {
-        answers.push(ans);
-        document.getElementById("answer").value = "";
-        q++;
+    let answerInput = document.getElementById("answer");
+
+    if(q >= 0) {
+        let ans = answerInput.value.trim();
+        if(ans != "") {
+            answers.push(ans);
+            answerInput.value = "";
+            q++;
+        } else {
+            alert("Please enter an answer!");
+            return;
+        }
     } else {
-        alert("Please enter an answer!");
-        return;
+        q++; // move from welcome screen to first question
     }
 
-    if(q < questions.length){
-        document.getElementById("question").innerText = questions[q];
+    if(q < questions.length) {
+        document.getElementById("question").innerHTML = questions[q];
+        document.getElementById("answer").style.display = "block";
+        document.getElementById("nextBtn").innerText = "Next";
+        document.getElementById("welcomeGif").style.display = "none";
     } else {
+        sendToGoogleSheet(answers);
         document.getElementById("box").innerHTML =
         `<h2>🎉 You finished the quiz! 🎉</h2>
         <img src='https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif' width='250'><br><br>
         <p>🎂 <b>Happy Birthday, Sapna!</b> ✨</p>
         <p>Your name means “dream,” and just like your name, you make life colorful and full of hope. May every little dream in your heart come true. Just like these glowing lights around, may your life shine with happiness, love, and warmth. Keep smiling, keep believing in yourself, and never stop chasing your dreams. Today is all about you… enjoy every moment, Sapna! 🌸💖</p>
         <p>Thanks for completing the quiz! 💖</p>`;
-
-        console.log("Answers:", answers);
-        // Optional: sendToGoogleSheet(answers); // Add your Google Sheet function here
     }
 }
+
+function sendToGoogleSheet(data){
+    fetch("https://script.google.com/macros/s/AKfycbz0fI38S9KEAGFRGHW4TpSv4QVHFEIlA_k2uTbrZ_UvEsKe388px_rj-KdD2Wr2owpj/exec", {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {"Content-Type": "application/json"}
+    })
+    .then(response => console.log("Answers saved to Google Sheet!"))
+    .catch(error => console.error("Error sending to Google Sheet:", error));
+}
+
+window.onload = function() {
+    document.getElementById("question").innerHTML = 
+        "🎉 <b>Happy Birthday, Sapna!</b> 🎂✨ <br>Welcome to your special quiz! 🌸<br>Click Next to start!";
+    document.getElementById("answer").style.display = "none";
+    document.getElementById("welcomeGif").style.display = "block";
+};
 </script>
 </head>
 <body>
 <div id="box">
-<h2 id="question">1. Before we start… how are you feeling right now? 🙂</h2>
+<h2 id="question"></h2>
+<img id="welcomeGif" src="https://media.giphy.com/media/26BRrSvJUa0crqw4E/giphy.gif" alt="Birthday GIF"><br>
 <input type="text" id="answer" placeholder="Type your answer">
 <br>
-<button onclick="nextQuestion()">Next</button>
+<button id="nextBtn" onclick="nextQuestion()">Next</button>
 </div>
 </body>
 </html>
