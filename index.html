@@ -53,7 +53,7 @@ h2, p{
 <h2>Happy Birthday, Sapna! 🎉💖</h2>
 <p>Hey Sapna! 🎉 On your 21st birthday, I wish you endless joy, laughter, and love. May every moment be filled with happiness, your dreams turn into reality, and your heart stay light forever. Enjoy this special day to the fullest and make beautiful memories that last a lifetime! 💖</p>
 
-<button onclick="startQuiz()">Start Quiz</button>
+<button id="startBtn">Start Quiz</button>
 
 </div>
 
@@ -79,12 +79,17 @@ let questions=[
 let answers = [];
 let q = 0;
 
+// Start Quiz Button
+document.getElementById("startBtn").addEventListener("click", startQuiz);
+
 function startQuiz(){
     document.getElementById("box").innerHTML=`
     <h2 id="question">${questions[q]}</h2>
     <input type="text" id="answer" placeholder="Type your answer"><br>
-    <button onclick="nextQuestion()">Next</button>
+    <button id="nextBtn">Next</button>
     `;
+
+    document.getElementById("nextBtn").addEventListener("click", nextQuestion);
 }
 
 function nextQuestion(){
@@ -106,8 +111,10 @@ function nextQuestion(){
         <h2>🎉 Woohoo! You completed the quiz! 😄💖<br>
         You are amazing! 🌸<br>
         Now… a little secret awaits! 🤫</h2>
-        <button onclick="secretQuestion()">Continue</button>
+        <button id="secretBtn">Continue</button>
         `;
+
+        document.getElementById("secretBtn").addEventListener("click", secretQuestion);
     }
 }
 
@@ -130,9 +137,12 @@ function sendEmail(){
 function secretQuestion(){
     document.getElementById("box").innerHTML=`
     <h2>Do you want to know who I am? 🤫</h2>
-    <button onclick="revealSecret('yes')">Yes</button>
-    <button onclick="revealSecret('no')">No</button>
+    <button id="revealYes">Yes</button>
+    <button id="revealNo">No</button>
     `;
+
+    document.getElementById("revealYes").addEventListener("click", ()=>{ revealSecret('yes'); });
+    document.getElementById("revealNo").addEventListener("click", ()=>{ revealSecret('no'); });
 }
 
 function revealSecret(answer){
