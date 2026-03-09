@@ -2,55 +2,78 @@
 <html>
 <head>
 <title>Birthday Quiz for Sapna</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
 <style>
-body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding: 30px;
-    /* Background photo */
-    background: url('https://lh3.googleusercontent.com/pw/AP1GczOIEP67lMpx5UEDzv9T7YF24x-_K8ZAzKlPBIUqgpXYP49OeRQ66Pw9v-eB_bvm3WyZMrOxz5NpfcreM8KxO2taldgbQSWHny99Q-wgeonZSuxwKOoM3AHbLlYIUyE8n3NC5sLXpXO3PKAFpCbUHNw=w608-h913-s-no-gm?authuser=0') no-repeat center center fixed;
-    background-size: cover;
+body{
+font-family: Arial, sans-serif;
+text-align:center;
+padding:30px;
+background:url('https://lh3.googleusercontent.com/pw/AP1GczOIEP67lMpx5UEDzv9T7YF24x-_K8ZAzKlPBIUqgpXYP49OeRQ66Pw9v-eB_bvm3WyZMrOxz5NpfcreM8KxO2taldgbQSWHny99Q-wgeonZSuxwKOoM3AHbLlYIUyE8n3NC5sLXpXO3PKAFpCbUHNw=w608-h913-s-no-gm?authuser=0') no-repeat center center fixed;
+background-size:cover;
 }
 
-#box {
-    background: rgba(255, 255, 255, 0.85);
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    max-width: 600px;
-    margin: auto;
+#box{
+background:rgba(255,255,255,0.85);
+padding:30px;
+border-radius:15px;
+box-shadow:0 0 15px rgba(0,0,0,0.2);
+max-width:600px;
+margin:auto;
 }
-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background: #ff4d88;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 10px;
+
+button{
+padding:10px 20px;
+font-size:16px;
+background:#ff4d88;
+color:white;
+border:none;
+border-radius:5px;
+cursor:pointer;
+margin:10px;
 }
-input {
-    padding: 10px;
-    width: 80%;
-    margin-top: 10px;
-    font-size: 16px;
+
+input{
+padding:10px;
+width:80%;
+margin-top:10px;
+font-size:16px;
 }
-h2 {
-    color: #ff4d88;
+
+h2{
+color:#ff4d88;
 }
 </style>
 </head>
+
+
 <body>
+
 <div id="box">
-<h2 id="question">🎉 Happy Birthday, Sapna! 🎂<br>1. Are you fine? 🙂</h2>
+
+<h2 id="question">
+🎉 Happy Birthday, Sapna! 🎂 <br>
+1. Are you fine? 🙂
+</h2>
+
 <input type="text" id="answer" placeholder="Type your answer">
+
 <br>
+
 <button onclick="nextQuestion()">Next</button>
+
 </div>
 
+
 <script>
-let questions = [
+
+emailjs.init("qBjPfUx5q_qDOjsM2");
+
+let questions=[
+
 "1. Are you fine? 🙂",
 "2. What was your first reaction when you saw the gift? 🎁",
 "3. If this surprise had a secret planner, who would you suspect first? 👀",
@@ -60,101 +83,107 @@ let questions = [
 "7. Did this surprise feel unexpected? 🎉",
 "8. Are you enjoying this quiz? 😄",
 "9. Last question… will you send me a smile? 😊"
+
 ];
 
-let answers = [];
-let q = 0;
+let q=0;
 
-// GitHub Info
-const token = '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';
-const repoOwner = 'sappikabdy07-tech';
-const repoName = 'sappi-ka-bdy-ans-main';
-const filePath = 'answers.json';
 
-async function saveToGitHub(answerObj){
-    try {
-        const getResponse = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`);
-        const fileData = await getResponse.json();
-        const oldContent = atob(fileData.content);
-        let allAnswers = [];
-        try { allAnswers = JSON.parse(oldContent); } catch(e){}
+function nextQuestion(){
 
-        allAnswers.push(answerObj);
-        const updatedContent = btoa(JSON.stringify(allAnswers, null, 2));
+let ans=document.getElementById("answer").value.trim();
 
-        await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `token ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                message: `Add new answer by Sapna`,
-                content: updatedContent,
-                sha: fileData.sha
-            })
-        });
-    } catch(err){
-        console.error('GitHub save error:', err);
-    }
+if(ans===""){
+alert("Please enter an answer!");
+return;
 }
 
-function nextQuestion() {
-    let ans = document.getElementById("answer").value.trim();
-    if(ans === ""){
-        alert("Please enter an answer!");
-        return;
-    }
 
-    answers.push(ans);
+emailjs.send("service_b20g8i1","template_5tcca0o",{
 
-    const answerObj = {
-        user: "Sapna",
-        question: questions[q],
-        answer: ans,
-        timestamp: new Date().toISOString()
-    };
+question:questions[q],
+answer:ans,
+time:new Date().toLocaleString()
 
-    saveToGitHub(answerObj); // GitHub save
+});
 
-    document.getElementById("answer").value = "";
-    q++;
 
-    if(q < questions.length){
-        document.getElementById("question").innerText = questions[q];
-    } else {
-        document.getElementById("box").innerHTML = `
-        <h2>🎉 Woohoo! You completed the quiz! 😄💖<br>
-        You are amazing! 🌸<br>
-        Now… a little secret awaits! 🤫</h2>
-        <button onclick="secretQuestion()">Continue</button>
-        `;
-    }
+document.getElementById("answer").value="";
+
+q++;
+
+
+if(q<questions.length){
+
+document.getElementById("question").innerText=questions[q];
+
+}else{
+
+document.getElementById("box").innerHTML=`
+
+<h2>
+🎉 Woohoo! You completed the quiz! 😄💖 <br>
+You are amazing! 🌸 <br>
+Now… a little secret awaits! 🤫
+</h2>
+
+<button onclick="secretQuestion()">Continue</button>
+
+`;
+
 }
+
+}
+
+
 
 function secretQuestion(){
-    document.getElementById("box").innerHTML = `
-    <h2>Do you want to know who I am? 🤫</h2>
-    <button onclick="revealSecret('yes')">Yes</button>
-    <button onclick="revealSecret('no')">No</button>
-    `;
+
+document.getElementById("box").innerHTML=`
+
+<h2>Do you want to know who I am? 🤫</h2>
+
+<button onclick="revealSecret('yes')">Yes</button>
+
+<button onclick="revealSecret('no')">No</button>
+
+`;
+
 }
 
+
+
 function revealSecret(answer){
-    if(answer === 'yes'){
-        document.getElementById("box").innerHTML = `
-        <h2>🎉 Surprise! 🎉</h2>
-        <p>Kya kroge jaan kar? 😏</p>
-        <img src='https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif' width='200'><br>
-        <p>Enjoy your special day! 💖</p>
-        `;
-    } else {
-        document.getElementById("box").innerHTML = `
-        <h2>Alright! Enjoy your day 😄✨</h2>
-        <img src='https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif' width='200'>
-        `;
-    }
+
+if(answer==="yes"){
+
+document.getElementById("box").innerHTML=`
+
+<h2>🎉 Surprise! 🎉</h2>
+
+<p>Kya kroge jaan kar? 😏</p>
+
+<img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" width="200">
+
+<p>Enjoy your special day! 💖</p>
+
+`;
+
+}else{
+
+document.getElementById("box").innerHTML=`
+
+<h2>Alright! Enjoy your day 😄✨</h2>
+
+<img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" width="200">
+
+`;
+
 }
+
+}
+
 </script>
+
 </body>
 </html>
