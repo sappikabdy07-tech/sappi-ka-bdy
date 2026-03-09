@@ -48,19 +48,16 @@ h2, p{
 <body>
 
 <div id="box">
-
 <h2>Welcome!</h2>
 <h2>Happy Birthday, Sapna! 🎉💖</h2>
 <p>Hey Sapna! 🎉 On your 21st birthday, I wish you endless joy, laughter, and love. May every moment be filled with happiness, your dreams turn into reality, and your heart stay light forever. Enjoy this special day to the fullest and make beautiful memories that last a lifetime! 💖</p>
-
 <button id="startBtn">Start Quiz</button>
-
 </div>
 
 <script>
-emailjs.init("aTNGSy2m2EwEF-6m8"); // Your EmailJS user key
+emailjs.init("aTNGSy2m2EwEF-6m8"); // Your EmailJS key
 
-let questions=[
+const questions=[
 "First of all, are you fine? 🙂",
 "What was your first reaction when you saw the gift? 🎁",
 "If this surprise had a secret planner, who would you suspect first? 👀",
@@ -77,7 +74,7 @@ let questions=[
 ];
 
 let answers = [];
-let q = 0;
+let currentQ = 0;
 
 const box = document.getElementById("box");
 const startBtn = document.getElementById("startBtn");
@@ -87,30 +84,42 @@ startBtn.addEventListener("click", () => {
 });
 
 function loadQuestion(){
-    if(q >= questions.length){
+    if(currentQ >= questions.length){
         sendEmail();
         showSecret();
         return;
     }
 
-    box.innerHTML = `
-        <h2>${questions[q]}</h2>
-        <input type="text" id="answer" placeholder="Type your answer"><br>
-        <button id="nextBtn">Next</button>
-    `;
+    box.innerHTML = '';
 
-    document.getElementById("nextBtn").addEventListener("click", nextQuestion);
+    // Question
+    const qElem = document.createElement('h2');
+    qElem.innerText = questions[currentQ];
+    box.appendChild(qElem);
+
+    // Input
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = 'answer';
+    input.placeholder = 'Type your answer';
+    box.appendChild(input);
+
+    // Next Button
+    const nextBtn = document.createElement('button');
+    nextBtn.innerText = 'Next';
+    nextBtn.addEventListener('click', nextQuestion);
+    box.appendChild(document.createElement('br'));
+    box.appendChild(nextBtn);
 }
 
 function nextQuestion(){
-    const ansInput = document.getElementById("answer");
-    const ans = ansInput.value.trim();
-    if(ans === ""){
-        alert("Please enter an answer!");
+    const ans = document.getElementById('answer').value.trim();
+    if(ans === ''){
+        alert('Please enter an answer!');
         return;
     }
-    answers.push({question: questions[q], answer: ans});
-    q++;
+    answers.push({question: questions[currentQ], answer: ans});
+    currentQ++;
     loadQuestion();
 }
 
@@ -131,40 +140,73 @@ function sendEmail(){
 }
 
 function showSecret(){
-    box.innerHTML=`
-        <h2>🎉 Woohoo! You completed the quiz! 😄💖<br>You are amazing! 🌸<br>Now… a little secret awaits! 🤫</h2>
-        <button id="secretBtn">Continue</button>
-    `;
+    box.innerHTML = '';
 
-    document.getElementById("secretBtn").addEventListener("click", secretQuestion);
+    const h2 = document.createElement('h2');
+    h2.innerHTML = "🎉 Woohoo! You completed the quiz! 😄💖<br>You are amazing! 🌸<br>Now… a little secret awaits! 🤫";
+    box.appendChild(h2);
+
+    const secretBtn = document.createElement('button');
+    secretBtn.innerText = 'Continue';
+    secretBtn.addEventListener('click', secretQuestion);
+    box.appendChild(secretBtn);
 }
 
 function secretQuestion(){
-    box.innerHTML=`
-        <h2>Do you want to know who I am? 🤫</h2>
-        <button id="revealYes">Yes</button>
-        <button id="revealNo">No</button>
-    `;
+    box.innerHTML = '';
 
-    document.getElementById("revealYes").addEventListener("click", ()=> revealSecret('yes'));
-    document.getElementById("revealNo").addEventListener("click", ()=> revealSecret('no'));
+    const h2 = document.createElement('h2');
+    h2.innerText = "Do you want to know who I am? 🤫";
+    box.appendChild(h2);
+
+    const yesBtn = document.createElement('button');
+    yesBtn.innerText = 'Yes';
+    yesBtn.addEventListener('click', ()=> revealSecret('yes'));
+    box.appendChild(yesBtn);
+
+    const noBtn = document.createElement('button');
+    noBtn.innerText = 'No';
+    noBtn.addEventListener('click', ()=> revealSecret('no'));
+    box.appendChild(noBtn);
 }
 
 function revealSecret(answer){
-    if(answer==="yes"){
-        box.innerHTML=`
-        <h2>🎉 Surprise! 🎉</h2>
-        <p>Kya kroge jaan kar? 😏</p>
-        <img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" width="200"><br>
-        <p>Enjoy your special day! 💖</p>
-        <p>Thanks for participating! 🙏</p>
-        `;
+    box.innerHTML = '';
+    if(answer==='yes'){
+        const h2 = document.createElement('h2');
+        h2.innerText = '🎉 Surprise! 🎉';
+        box.appendChild(h2);
+
+        const p = document.createElement('p');
+        p.innerText = 'Kya kroge jaan kar? 😏';
+        box.appendChild(p);
+
+        const img = document.createElement('img');
+        img.src = 'https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif';
+        img.width = 200;
+        box.appendChild(img);
+
+        const p2 = document.createElement('p');
+        p2.innerText = 'Enjoy your special day! 💖';
+        box.appendChild(p2);
+
+        const p3 = document.createElement('p');
+        p3.innerText = 'Thanks for participating! 🙏';
+        box.appendChild(p3);
+
     } else {
-        box.innerHTML=`
-        <h2>Alright! Enjoy your day 😄✨</h2>
-        <img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" width="200">
-        <p>Thanks for participating! 🙏</p>
-        `;
+        const h2 = document.createElement('h2');
+        h2.innerText = 'Alright! Enjoy your day 😄✨';
+        box.appendChild(h2);
+
+        const img = document.createElement('img');
+        img.src = 'https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif';
+        img.width = 200;
+        box.appendChild(img);
+
+        const p = document.createElement('p');
+        p.innerText = 'Thanks for participating! 🙏';
+        box.appendChild(p);
     }
 }
 </script>
