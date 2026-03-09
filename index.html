@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Birthday Quiz for Sapna</title>
+<title>Birthday Quiz for Sapna 🎂</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
 <style>
+
 body{
 font-family: Arial, sans-serif;
 text-align:center;
@@ -17,10 +18,9 @@ background-size:cover;
 }
 
 #box{
-background:rgba(255,255,255,0.85);
+background:rgba(255,255,255,0.9);
 padding:30px;
 border-radius:15px;
-box-shadow:0 0 15px rgba(0,0,0,0.2);
 max-width:600px;
 margin:auto;
 }
@@ -33,7 +33,7 @@ color:white;
 border:none;
 border-radius:5px;
 cursor:pointer;
-margin:10px;
+margin-top:10px;
 }
 
 input{
@@ -41,23 +41,18 @@ padding:10px;
 width:80%;
 margin-top:10px;
 font-size:16px;
+border-radius:5px;
+border:1px solid #ccc;
 }
 
-h2{
-color:#ff4d88;
-}
 </style>
 </head>
-
 
 <body>
 
 <div id="box">
 
-<h2 id="question">
-🎉 Happy Birthday, Sapna! 🎂 <br>
-1. Are you fine? 🙂
-</h2>
+<h2 id="qtext">1. Are you fine? 🙂</h2>
 
 <input type="text" id="answer" placeholder="Type your answer">
 
@@ -67,13 +62,14 @@ color:#ff4d88;
 
 </div>
 
-
 <script>
 
-emailjs.init("qBjPfUx5q_qDOjsM2");
+// Initialize EmailJS with your public key
+(function(){
+emailjs.init("aTNGSy2m2EwEF-6m8"); // ← public key
+})();
 
 let questions=[
-
 "1. Are you fine? 🙂",
 "2. What was your first reaction when you saw the gift? 🎁",
 "3. If this surprise had a secret planner, who would you suspect first? 👀",
@@ -83,104 +79,75 @@ let questions=[
 "7. Did this surprise feel unexpected? 🎉",
 "8. Are you enjoying this quiz? 😄",
 "9. Last question… will you send me a smile? 😊"
-
 ];
 
+let answers=[];
 let q=0;
-
 
 function nextQuestion(){
 
 let ans=document.getElementById("answer").value.trim();
 
 if(ans===""){
-alert("Please enter an answer!");
+alert("Please enter your answer!");
 return;
 }
 
-
-emailjs.send("service_b20g8i1","template_5tcca0o",{
-
-question:questions[q],
-answer:ans,
-time:new Date().toLocaleString()
-
-});
-
+answers.push(questions[q] + " → " + ans);
 
 document.getElementById("answer").value="";
 
 q++;
 
-
 if(q<questions.length){
-
-document.getElementById("question").innerText=questions[q];
-
+document.getElementById("qtext").innerText=questions[q];
 }else{
-
+sendEmail();
 document.getElementById("box").innerHTML=`
-
-<h2>
-🎉 Woohoo! You completed the quiz! 😄💖 <br>
-You are amazing! 🌸 <br>
-Now… a little secret awaits! 🤫
-</h2>
-
+<h2>🎉 Quiz Completed 😄</h2>
+<p>Thank you for playing 💖</p>
 <button onclick="secretQuestion()">Continue</button>
-
 `;
-
 }
 
 }
 
+function sendEmail(){
+let allAnswers = answers.join("\n\n");
 
+emailjs.send("service_b20g8i1","template_clk64s8",{
+message: allAnswers,
+time: new Date().toLocaleString()
+})
+.then(function(response){
+console.log("SUCCESS!", response.status, response.text);
+}, function(error){
+console.log("FAILED...", error);
+});
+}
 
 function secretQuestion(){
-
 document.getElementById("box").innerHTML=`
-
 <h2>Do you want to know who I am? 🤫</h2>
-
 <button onclick="revealSecret('yes')">Yes</button>
-
 <button onclick="revealSecret('no')">No</button>
-
 `;
-
 }
 
-
-
-function revealSecret(answer){
-
-if(answer==="yes"){
-
+function revealSecret(ans){
+if(ans==="yes"){
 document.getElementById("box").innerHTML=`
-
 <h2>🎉 Surprise! 🎉</h2>
-
 <p>Kya kroge jaan kar? 😏</p>
-
 <img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" width="200">
-
-<p>Enjoy your special day! 💖</p>
-
+<p>Enjoy your special day 💖</p>
 `;
-
 }else{
-
 document.getElementById("box").innerHTML=`
-
-<h2>Alright! Enjoy your day 😄✨</h2>
-
+<h2>Alright 😄 Enjoy your day ✨</h2>
 <img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" width="200">
-
 `;
-
 }
-
 }
 
 </script>
