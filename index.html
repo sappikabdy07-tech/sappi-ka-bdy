@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Birthday Quiz for Sapna</title>
+<title>Birthday Quiz for Sapna 🎂</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <style>
@@ -12,16 +12,13 @@ body{
     background:url('https://lh3.googleusercontent.com/pw/AP1GczOIEP67lMpx5UEDzv9T7YF24x-_K8ZAzKlPBIUqgpXYP49OeRQ66Pw9v-eB_bvm3WyZMrOxz5NpfcreM8KxO2taldgbQSWHny99Q-wgeonZSuxwKOoM3AHbLlYIUyE8n3NC5sLXpXO3PKAFpCbUHNw=w608-h913-s-no-gm?authuser=0') no-repeat center center fixed;
     background-size:cover;
 }
-
 #box{
     background:rgba(255,255,255,0.9);
     padding:30px;
     border-radius:15px;
-    box-shadow:0 0 15px rgba(0,0,0,0.2);
     max-width:600px;
     margin:auto;
 }
-
 button{
     padding:10px 20px;
     font-size:16px;
@@ -30,35 +27,36 @@ button{
     border:none;
     border-radius:5px;
     cursor:pointer;
-    margin:10px;
+    margin-top:10px;
 }
-
 input{
     padding:10px;
     width:80%;
     margin-top:10px;
     font-size:16px;
+    border-radius:5px;
+    border:1px solid #ccc;
 }
-
-h2, p{
-    color:#ff4d88;
-}
+h2,p{color:#ff4d88;}
 </style>
 </head>
-<body>
 
-<div id="box"></div>
+<body>
+<div id="box">
+<h2>Welcome!</h2>
+<h2>Happy Birthday, Sapna! 🎉💖</h2>
+<p>Hey Sapna! 🎉 On your 21st birthday, I wish you endless joy, laughter, and love. May every moment be filled with happiness, your dreams turn into reality, and your heart stay light forever. Enjoy this special day! 💖</p>
+<button onclick="startQuiz()">Start Quiz</button>
+</div>
 
 <script>
-emailjs.init("aTNGSy2m2EwEF-6m8"); // EmailJS Key
+emailjs.init("aTNGSy2m2EwEF-6m8"); // EmailJS key
 
-const box = document.getElementById("box");
-
-const questions=[
+let questions=[
 "First of all, are you fine? 🙂",
 "What was your first reaction when you saw the gift? 🎁",
 "If this surprise had a secret planner, who would you suspect first? 👀",
-"If you rate this gift (1–10), what would you give? ⭐",
+"If you rate this gift (1-10), what would you give? ⭐",
 "If you describe this gift in one word, what would it be? ✨",
 "Did this surprise feel unexpected? 🎉",
 "Are you enjoying this quiz? 😄",
@@ -71,134 +69,79 @@ const questions=[
 ];
 
 let answers=[];
-let currentQ = -1;
+let q=0;
 
-// Start page
-function showWelcome(){
-    box.innerHTML = `
-        <h2>Welcome!</h2>
-        <h2>Happy Birthday, Sapna! 🎉💖</h2>
-        <p>Hey Sapna! 🎉 On your 21st birthday, I wish you endless joy, laughter, and love. May every moment be filled with happiness, your dreams turn into reality, and your heart stay light forever. Enjoy this special day to the fullest and make beautiful memories that last a lifetime! 💖</p>
-        <button id="startBtn">Start Quiz</button>
-    `;
-
-    document.getElementById("startBtn").addEventListener("click", ()=>{ nextQuestion(); });
+function startQuiz(){
+    showQuestion();
 }
 
-// Load question
+function showQuestion(){
+    document.getElementById("box").innerHTML=`
+        <h2>${questions[q]}</h2>
+        <input type="text" id="answer" placeholder="Type your answer">
+        <br>
+        <button onclick="nextQuestion()">Next</button>
+    `;
+}
+
 function nextQuestion(){
-    currentQ++;
-    if(currentQ >= questions.length){
-        sendEmail();
-        showSecret();
+    let ans=document.getElementById("answer").value.trim();
+    if(ans===""){
+        alert("Please enter an answer!");
         return;
     }
-
-    box.innerHTML = '';
-    const qElem = document.createElement('h2');
-    qElem.innerText = questions[currentQ];
-    box.appendChild(qElem);
-
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.id = 'answer';
-    input.placeholder = 'Type your answer';
-    box.appendChild(input);
-
-    const btn = document.createElement('button');
-    btn.innerText = 'Next';
-    btn.addEventListener('click', ()=>{
-        const ans = document.getElementById('answer').value.trim();
-        if(ans===''){
-            alert('Please enter an answer!');
-            return;
-        }
-        answers.push({question: questions[currentQ], answer: ans});
-        nextQuestion();
-    });
-    box.appendChild(document.createElement('br'));
-    box.appendChild(btn);
+    answers.push(questions[q] + " → " + ans);
+    q++;
+    if(q<questions.length){
+        showQuestion();
+    } else{
+        sendEmail();
+        document.getElementById("box").innerHTML=`
+            <h2>🎉 Quiz Completed 😄</h2>
+            <p>Thank you for playing 💖</p>
+            <button onclick="secretQuestion()">Continue</button>
+        `;
+    }
 }
 
-// Send all answers in one email
 function sendEmail(){
-    let message = "Birthday Quiz Answers 🎂\n\n";
-    answers.forEach(a=>{
-        message += Question: ${a.question}\nAnswer: ${a.answer}\nTime: ${new Date().toLocaleString()}\n\n;
-    });
-
+    let allAnswers = answers.join("\n\n");
     emailjs.send("service_b20g8i1","template_clk64s8",{
-        message: message,
-        to_name: "Sapna"
-    }).then(res=>{
-        console.log("Email sent!", res.status, res.text);
-    }).catch(err=>{
-        console.error("Email error:", err);
+        message: allAnswers,
+        time: new Date().toLocaleString()
+    })
+    .then(function(response){
+        console.log("SUCCESS!", response.status, response.text);
+    }, function(error){
+        console.log("FAILED...", error);
     });
-}
-
-// Secret reveal
-function showSecret(){
-    box.innerHTML = `
-        <h2>🎉 Woohoo! You completed the quiz! 😄💖<br>You are amazing! 🌸<br>Now… a little secret awaits! 🤫</h2>
-        <button id="secretBtn">Continue</button>
-    `;
-    document.getElementById('secretBtn').addEventListener('click', secretQuestion);
 }
 
 function secretQuestion(){
-    box.innerHTML = `
+    document.getElementById("box").innerHTML=`
         <h2>Do you want to know who I am? 🤫</h2>
-        <button id="revealYes">Yes</button>
-        <button id="revealNo">No</button>
+        <button onclick="revealSecret('yes')">Yes</button>
+        <button onclick="revealSecret('no')">No</button>
     `;
-    document.getElementById('revealYes').addEventListener('click', ()=> revealSecret('yes'));
-    document.getElementById('revealNo').addEventListener('click', ()=> revealSecret('no'));
 }
 
-function revealSecret(answer){
-    box.innerHTML = '';
-    if(answer==='yes'){
-        const h2 = document.createElement('h2');
-        h2.innerText = '🎉 Surprise! 🎉';
-        box.appendChild(h2);
-
-        const p1 = document.createElement('p');
-        p1.innerText = 'Kya kroge jaan kar? 😏';
-        box.appendChild(p1);
-
-        const img = document.createElement('img');
-        img.src = 'https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif';
-        img.width = 200;
-        box.appendChild(img);
-
-        const p2 = document.createElement('p');
-        p2.innerText = 'Enjoy your special day! 💖';
-        box.appendChild(p2);
-
-        const p3 = document.createElement('p');
-        p3.innerText = 'Thanks for participating! 🙏';
-        box.appendChild(p3);
-
-    } else {
-        const h2 = document.createElement('h2');
-        h2.innerText = 'Alright! Enjoy your day 😄✨';
-        box.appendChild(h2);
-
-        const img = document.createElement('img');
-        img.src = 'https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif';
-        img.width = 200;
-        box.appendChild(img);
-
-        const p = document.createElement('p');
-        p.innerText = 'Thanks for participating! 🙏';
-        box.appendChild(p);
+function revealSecret(ans){
+    if(ans==="yes"){
+        document.getElementById("box").innerHTML=`
+            <h2>🎉 Surprise! 🎉</h2>
+            <p>Kya kroge jaan kar? 😏</p>
+            <img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" width="200">
+            <p>Enjoy your special day 💖</p>
+            <p>Thanks for participating! 🙏</p>
+        `;
+    } else{
+        document.getElementById("box").innerHTML=`
+            <h2>Alright 😄 Enjoy your day ✨</h2>
+            <img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" width="200">
+            <p>Thanks for participating! 🙏</p>
+        `;
     }
 }
-
-// Initialize
-showWelcome();
 </script>
-
 </body>
 </html>
