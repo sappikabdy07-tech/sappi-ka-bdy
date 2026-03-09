@@ -79,43 +79,39 @@ let questions=[
 let answers = [];
 let q = 0;
 
-// Start Quiz Button
-document.getElementById("startBtn").addEventListener("click", startQuiz);
+const box = document.getElementById("box");
+const startBtn = document.getElementById("startBtn");
 
-function startQuiz(){
-    document.getElementById("box").innerHTML=`
-    <h2 id="question">${questions[q]}</h2>
-    <input type="text" id="answer" placeholder="Type your answer"><br>
-    <button id="nextBtn">Next</button>
+startBtn.addEventListener("click", () => {
+    loadQuestion();
+});
+
+function loadQuestion(){
+    if(q >= questions.length){
+        sendEmail();
+        showSecret();
+        return;
+    }
+
+    box.innerHTML = `
+        <h2>${questions[q]}</h2>
+        <input type="text" id="answer" placeholder="Type your answer"><br>
+        <button id="nextBtn">Next</button>
     `;
 
     document.getElementById("nextBtn").addEventListener("click", nextQuestion);
 }
 
 function nextQuestion(){
-    let ans=document.getElementById("answer").value.trim();
-    if(ans===""){
+    const ansInput = document.getElementById("answer");
+    const ans = ansInput.value.trim();
+    if(ans === ""){
         alert("Please enter an answer!");
         return;
     }
     answers.push({question: questions[q], answer: ans});
-
-    document.getElementById("answer").value="";
     q++;
-
-    if(q<questions.length){
-        document.getElementById("question").innerText = questions[q];
-    } else {
-        sendEmail(); // Send all answers in one email
-        document.getElementById("box").innerHTML=`
-        <h2>🎉 Woohoo! You completed the quiz! 😄💖<br>
-        You are amazing! 🌸<br>
-        Now… a little secret awaits! 🤫</h2>
-        <button id="secretBtn">Continue</button>
-        `;
-
-        document.getElementById("secretBtn").addEventListener("click", secretQuestion);
-    }
+    loadQuestion();
 }
 
 function sendEmail(){
@@ -134,20 +130,29 @@ function sendEmail(){
     });
 }
 
-function secretQuestion(){
-    document.getElementById("box").innerHTML=`
-    <h2>Do you want to know who I am? 🤫</h2>
-    <button id="revealYes">Yes</button>
-    <button id="revealNo">No</button>
+function showSecret(){
+    box.innerHTML=`
+        <h2>🎉 Woohoo! You completed the quiz! 😄💖<br>You are amazing! 🌸<br>Now… a little secret awaits! 🤫</h2>
+        <button id="secretBtn">Continue</button>
     `;
 
-    document.getElementById("revealYes").addEventListener("click", ()=>{ revealSecret('yes'); });
-    document.getElementById("revealNo").addEventListener("click", ()=>{ revealSecret('no'); });
+    document.getElementById("secretBtn").addEventListener("click", secretQuestion);
+}
+
+function secretQuestion(){
+    box.innerHTML=`
+        <h2>Do you want to know who I am? 🤫</h2>
+        <button id="revealYes">Yes</button>
+        <button id="revealNo">No</button>
+    `;
+
+    document.getElementById("revealYes").addEventListener("click", ()=> revealSecret('yes'));
+    document.getElementById("revealNo").addEventListener("click", ()=> revealSecret('no'));
 }
 
 function revealSecret(answer){
     if(answer==="yes"){
-        document.getElementById("box").innerHTML=`
+        box.innerHTML=`
         <h2>🎉 Surprise! 🎉</h2>
         <p>Kya kroge jaan kar? 😏</p>
         <img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" width="200"><br>
@@ -155,7 +160,7 @@ function revealSecret(answer){
         <p>Thanks for participating! 🙏</p>
         `;
     } else {
-        document.getElementById("box").innerHTML=`
+        box.innerHTML=`
         <h2>Alright! Enjoy your day 😄✨</h2>
         <img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" width="200">
         <p>Thanks for participating! 🙏</p>
@@ -163,6 +168,5 @@ function revealSecret(answer){
     }
 }
 </script>
-
 </body>
 </html>
